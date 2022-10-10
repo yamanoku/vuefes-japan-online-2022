@@ -4,13 +4,11 @@
 
 最初に自己紹介です。
 
-やまのくと申します。Web デザイナーとして働き出して、マークアップエンジニアとして本格的に Web 技術に触れはじめ、アクセシビリティの分野に関心を高めていきました。
+[やまのく](https://twitter.com/yamanoku)と申します。Web デザイナーとして働き出して、マークアップエンジニアとして本格的に Web 技術に触れはじめ、アクセシビリティの分野に関心を高めていきました。
 
 現在は事業会社に所属し、Web 標準の技術を活用してユーザー体験を向上させていきたいと考えている者です。
 
-今回の Vue Fes Japan Online 2022 では Vue.js とアクセシビリティにまつわるテーマで発表させていただくのですが、
-
-はじめに、なぜこのテーマで発表するのかを説明します。
+今回の Vue Fes Japan Online 2022 では Vue.js とアクセシビリティにまつわるテーマで発表させていただくのですが、はじめに、なぜこのテーマで発表するのかを説明します。
 
 それは Vue.js での開発においてアクセシビリティを考慮する機会が少ないのではないかと思ったからです。
 
@@ -18,13 +16,13 @@
 
 最近のフロントエンド開発において、ここに注力できることはサイトやプロダクトの価値付け、他との差別化ができる領域になってきています。
 
-Vue3 のドキュメントからアクセシビリティに関する項目が追加されました。アクセシビリティの基礎や、実際のユースケースの一部を学べるコンテンツになっています。
+Vue3 のドキュメントから[アクセシビリティに関する項目](https://vuejs.org/guide/best-practices/accessibility.html)が追加されました。アクセシビリティの基礎や、実際のユースケースの一部を学べるコンテンツになっています。
 
-Vue2 以前では草案という形でマージされることなく終わってしまったのでこうしたドキュメントが追加されたことは良いことです。
+Vue2 以前では[草案という形でマージされることなく終わってしまった](https://github.com/vuejs/v2.vuejs.org/pull/1002)のでこうしたドキュメントが追加されたことは良いことです。
 
-ですが、米国の非営利団体 WebAIM の調査によると Vue.js を用いたサイトではアクセシビリティ対応が足りていないという報告があがっています。
+ですが、米国の非営利団体 [WebAIM](https://webaim.org/) の調査によると Vue.js を用いたサイトではアクセシビリティ対応が足りていないという報告があがっています。
 
-これは特定のライブラリやフレームワークを使うことがアクセシブルとならない事ではありませんが、一昨年・去年から対応が平均以下となっている事実があります。
+これは特定のライブラリやフレームワークを使うことがアクセシブルとならない事ではありませんが、一昨年・去年から対応が平均以下となっている事実[^1]があります。
 
 調査されたサイトに日本のものがいくつ含まれているかは定かではありませんが Vue.js で開発をする身として、この状況が野放しになっていいとは思っていません。
 
@@ -54,11 +52,12 @@ WAI-ARIA を使うことでアクセシビリティを高めることができ�
 
 ですが WAI-ARIA を使用するに辺り気をつけなければならないことがあります。
 
-それは「**NO ARIA is better than BAD ARIA（ARIA 無しのほうが、悪い ARIA よりも良い）**」ということです。
+それは「**NO ARIA is better than BAD ARIA（ARIA 無しのほうが、悪い ARIA よりも良い）**」ということです[^2]。
 
 つまり、WAI-ARIA を間違って使うくらいならそれを使わないほうがまだアクセシビリティとしてマシであるということです。
 
 今回はそんな WAI-ARIA の使用について、開発時に誤りやすいものや意識し忘れがちな部分について紹介します。
+
 ### aria-label
 
 まずは aria-label。こちらは支援技術に伝えたいテキスト情報がある場合に使用されるものです。
@@ -94,7 +93,7 @@ WAI-ARIA を使うことでアクセシビリティを高めることができ�
 
 支援技術のユーザーだけ違う情報を与えてしまうのではなくあらゆる人に同等の情報を与えるために、できる限り見えるテキストで提供してください。
 
-ちなみに aria-label は WAI-ARIA 1.2 より `div` 要素や `span` 要素といった generic role など、名前をつけてはならない role が定義されています。詳細は[仕様](https://www.w3.org/TR/wai-aria-1.2/#namefromprohibited)をチェックしてみてください。
+ちなみに aria-label は WAI-ARIA 1.2 より `div` 要素や `span` 要素といった `generic role` など、名前をつけてはならない `role` が定義されています。詳細は[仕様](https://www.w3.org/TR/wai-aria-1.2/#namefromprohibited)をチェックしてみてください。
 
 ### aria-hidden
 
@@ -200,7 +199,7 @@ const personNumber = computed(() => {
 
 ですが、Vue.js で開発する人であればよく見かけるライブラリで使用されています。
 
-それは [Vue router](https://router.vuejs.org/) です。
+それは [Vue Router](https://router.vuejs.org/) です。
 
 `<router-link>` で使用されることもあれば Nuxt.js の標準リンクコンポーネントである `<nuxt-link>` でも使用されています。
 
@@ -232,7 +231,7 @@ const personNumber = computed(() => {
 
 マークアップする際にはリンクをどういったグルーピングにするか置く領域を意識しましょう。
 
-ちなみに Vue Router には aria-current 部分を API として制御できます。
+ちなみに Vue Router には aria-current 部分を API として制御できます[^3]。
 
 値は複数存在しており、ステップや日付、現在時刻の情報を示すことが可能です。aria-current の値が意図したものとなっているか確認してみましょう。
 
@@ -246,11 +245,11 @@ const personNumber = computed(() => {
 
 WAI-ARIA をよくわからず使ってしまいそうな時は一旦立ち止まってそれらを使わずに HTML だけで表現できないかということも検討してみてください。
 
-開発者向けの Web 技術の情報が集約されている MDN Web Docs には HTML 要素のページでアクセシビリティ上の懸念点が載っています。
+開発者向けの Web 技術の情報が集約されている [MDN Web Docs](https://developer.mozilla.org/ja/) には HTML 要素のページでアクセシビリティ上の懸念点が載っています。
 
 普段書いている HTML の使い方が間違ってないかを理解する上で有益なサイトです。
 
-また、HTML をより詳細に学ぶのであれば「HTML 解体新書」もオススメします。
+また、HTML をより詳細に学ぶのであれば「[HTML 解体新書](https://www.borndigital.co.jp/book/25999.html)」もオススメします。
 
 現時点でもっとも HTML の仕様書に密接な日本語の書籍ですので実装やレビュー時のリファレンスとしても活用してみてください。
 
@@ -265,6 +264,7 @@ WAI-ARIA をよくわからず使ってしまいそうな時は一旦立ち止�
 そこでコンポーネント設計でルールを内包させることでチーム開発において認識の齟齬を減らした開発がしやすくなります。
 
 次は汎用性のあるアクセシブルなコンポーネント作りに関するヒントを紹介します。
+
 ### TypeScript で補強する
 
 Vue3 からは TypeScript 対応が改善されてきました。これを期に導入しだした人もいるでしょう。
@@ -313,7 +313,7 @@ defineProps<Props>();
 </script>
 ```
 
-また vue-tsc といった型検査ツールを使用すると ``<template>` 内の属性値もチェックしてくれます。
+また [vue-tsc](https://github.com/johnsoncodehk/volar) といった型検査ツールを使用すると `<template>` 内の属性値もチェックしてくれます。
 
 ```html
 <!-- aria-current は空文字が使用できないと怒ってくれる -->
@@ -328,7 +328,7 @@ defineProps<Props>();
 
 Visually Hidden とは視覚的には確認できないが支援技術により確認できる方法です。
 
-Bootstrap といった各種 UI フレームワークで定義されていたりします。
+[Bootstrap](https://getbootstrap.jp/docs/5.0/helpers/visually-hidden/) といった各種 UI フレームワークで定義されていたりします。
 
 前述した aria-label とも似ていますがこのようなコンポーネントとすることで汎用的に使い回せます。
 
@@ -383,7 +383,7 @@ const tag = computed(() => props.tag ? props.tag : 'span');
 
 ### Fragments
 
-Vue3 からは Fragments という概念が導入されています。
+Vue3 からは [Fragments](https://v3-migration.vuejs.org/new/fragments.html) という概念が導入されています。
 
 Vue2 までは `<template>` 内のルート要素は単一のものでなければなりませんでした。
 それによりコンポーネントによってはマークアップが間違っている場合がありました。
@@ -463,9 +463,9 @@ Vue.js のパーサーが存在するので併せて使うことで vue コン�
 
 ### 結合テスト
 
-フロントエンドのテストのために Jest を導入していますでしょうか。だとするとあなたはラッキーです。
+フロントエンドのテストのために [Jest](https://jestjs.io/ja/) を導入していますでしょうか。だとするとあなたはラッキーです。
 
-testing-library を使って支援技術ユーザーを想定した振る舞いの結合テストを書いてみましょう。
+[testing-library](https://testing-library.com/) を使って支援技術ユーザーを想定した振る舞いの結合テストを書いてみましょう。
 
 ```js
 import { render, screen } from '@testing-library/vue';
@@ -485,7 +485,7 @@ test('キーボード操作でクリックイベントが機能している', as
 
 このテストケースでは `getByRole` を用いて要素の `role` を取得し内部のテキストを確認するようにしています。
 
-更にキーボードテストをしてくれる testing-library 拡張機能を使い、正しく機能しているかをチェックしています。
+更に[キーボードテストをしてくれる testing-library 拡張機能](https://github.com/Grunet/keyboard-testing-library)を使い、正しく機能しているかをチェックしています。
 
 `userEvent` にてタブ移動させたりクリックさせることもできますが、こちらの場合が簡潔で理解しやすい形になります。
 
@@ -531,7 +531,7 @@ eslint 同様、ルールは独自で調整できるので必要に応じて精�
 
 想定した順序にフォーカスできるようになっているかを確認しましょう。
 
-taba11y という拡張機能を使うことでブラウザ上でフォーカス順序を可視化してくれます。
+[taba11y](https://chrome.google.com/webstore/detail/taba11y/aocppmckdocdjkphmofnklcjhdidgmga) という拡張機能を使うことでブラウザ上でフォーカス順序を可視化してくれます。
 
 ちなみに Firefox の DevTools では標準の機能でフォーカス順序を確認できるようになっています。
 
@@ -539,13 +539,9 @@ taba11y という拡張機能を使うことでブラウザ上でフォーカス
 
 支援技術の１つでもあるスクリーンリーダーにおいて実際にどう使われるかもチェックしておきましょう。
 
-Windows と macOS には標準でスクリーンリーダーが搭載されています。Windows のみですが OSS で開発されている NVDA というスクリーンリーダーもあります。
+Windows と macOS には標準でスクリーンリーダーが搭載されています。Windows のみですが OSS で開発されている [NVDA](https://www.nvda.jp/) というスクリーンリーダーもあります。
 
-また、一部の支援技術のみですが自動テストとして実施できるためのツールも公開されています。
-
-- [Guidepup](https://github.com/guidepup/guidepup)
-- [web-test-runner-voiceover](https://github.com/blueprintui/web-test-runner-voiceover)
-- [VoiceOver.js](https://github.com/AccessLint/screenreaders)
+また、一部の支援技術のみですが自動テストとして実施できるためのツール[^4]も公開されています。
 
 ## おわりに
 
@@ -562,3 +558,8 @@ Web アクセシビリティスペシャリストの Marcus 氏が [Accessible V
 今回の発表からアクセシビリティを意識した Vue.js 開発が増えていきアクセシブルなサイトやアプリケーションが生まれていければと思っております。
 
 以上で発表を終わります。ご清聴いただきありがとうございました。
+
+[^1]: https://webaim.org/projects/million/2021, https://webaim.org/projects/million/2020
+[^2]: [Read Me First | APG | WAI | W3C](https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/)
+[^3]: https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue
+[^4]: [Guidepup](https://github.com/guidepup/guidepup), [web-test-runner-voiceover](https://github.com/blueprintui/web-test-runner-voiceover), [VoiceOver.js](https://github.com/AccessLint/screenreaders)
