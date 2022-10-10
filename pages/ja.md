@@ -1,8 +1,23 @@
+---
+layout: layout
+title: Vue.js でアクセシブルなコンポーネントをつくるために
+description: やまのくの Vue Fes Japan Online 2022 の登壇資料
+lang: ja
+---
+
 # Vue.js でアクセシブルなコンポーネントをつくるために
+
+![サムネイル：Vue.js でアクセシブルなコンポーネントをつくるために - 2022](../images/to-make-accessible-components-in-vuejs-2022.png)
+
+## 翻訳記事一覧
+
+[日本語ページ](https://yamanoku.net/vuefes-japan-online-2022/ja/) / [English page](https://yamanoku.net/vuefes-japan-online-2022/en/)
 
 ## はじめに
 
 最初に自己紹介です。
+
+<img src="../images/yamanoku-icon.png" alt="写真：やまのく" width="256" height="256">
 
 [やまのく](https://twitter.com/yamanoku)と申します。Web デザイナーとして働き出して、マークアップエンジニアとして本格的に Web 技術に触れはじめ、アクセシビリティの分野に関心を高めていきました。
 
@@ -22,6 +37,8 @@ Vue2 以前では[草案という形でマージされることなく終わっ�
 
 ですが、米国の非営利団体 [WebAIM](https://webaim.org/) の調査によると Vue.js を用いたサイトではアクセシビリティ対応が足りていないという報告があがっています。
 
+![The WebAIM Million 2022 の JavaScript フレームワークの結果。Vue.js でのアクセシビリティ対応は平均より 24.8% も低い結果が出ている](../images/the-webaim-million-2022.png)
+
 これは特定のライブラリやフレームワークを使うことがアクセシブルとならない事ではありませんが、一昨年・去年から対応が平均以下となっている事実[^1]があります。
 
 調査されたサイトに日本のものがいくつ含まれているかは定かではありませんが Vue.js で開発をする身として、この状況が野放しになっていいとは思っていません。
@@ -30,7 +47,7 @@ Vue2 以前では[草案という形でマージされることなく終わっ�
 
 対象は「Web アクセシビリティを学びはじめた人」や「Vue.js でアクセシビリティの向上をしていきたい人」向けになります。
 
-今回の事例で紹介するコードは Vue3 なお今回の事例で紹介するコードは Vue3 をベースにしたものとなっております。その点、ご了承ください。
+なお今回の事例で紹介するコードは Vue3 をベースにしたものとなっております。その点、ご了承ください。
 
 ## 誤ったアクセシビリティ対応について
 
@@ -38,9 +55,13 @@ Vue2 以前では[草案という形でマージされることなく終わっ�
 
 悪いアクセシビリティ対応をなくすためにもよく間違いやすい対応について先に学んでいきましょう。
 
+![スクリーンショット：WAI-ARIA 1.1 仕様書](../images/wai-aria-1-1.png)
+
 アクセシビリティを意識するようになってから WAI-ARIA について知った人は多いでしょう。
 
 WAI-ARIA はスクリーンリーダーといった支援技術へ HTML だけでは表現しきれないアクセシブルな情報を補完する技術仕様です。
+
+![アプリケーションUI、アクセシビリティツリー、支援技術を通じてユーザーに情報が伝わっていく流れ](../images/accessibility-tree.png)
 
 ブラウザから DOM ツリーと CSS のレンダリングを解析してアクセシビリティに関する情報がアクセシビリティツリーに反映されます。
 
@@ -67,7 +88,7 @@ WAI-ARIA を使うことでアクセシビリティを高めることができ�
 このパターンではボタン内にテキストがないため「メニュー、ボタン 」として認識されます。
 
 ```html
-<button type="button" aria-label="メニューボタン">
+<button type="button" aria-label="メニュー">
   <span class="fa-solid fa-bars"></span>
 </button>
 ```
@@ -75,7 +96,7 @@ WAI-ARIA を使うことでアクセシビリティを高めることができ�
 ではこのパターンではどうなるでしょうか。
 
 ```html
-<a href="https://v3.ja.vuejs.org/" aria-label="リンク">
+<a href="https://v3.ja.vuejs.org/" aria-label="Vue">
   <img src="link-text.png" alt="Vue.js 日本語版サイト">
 </a>
 ```
@@ -162,7 +183,7 @@ aria-hidden はとても強力なものなので使う場合は影響範囲を�
 
 具体例としては、フォーム入力に変化があった際や SPA における画面遷移時、警告の通知やカルーセルの変化時などが挙げられます。
 
-```vue
+```html
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 const count = ref<number>(0);
@@ -176,7 +197,7 @@ const personNumber = computed(() => {
   <button type="button" @click="count++">増やす</button>
   <button type="button" @click="count--">減らす</button>
   <div role="status" aria-live="polite">
-    {{ personNumber }}名
+    ﹛{ personNumber }}名
   </div>
 </template>
 ```
@@ -271,7 +292,7 @@ Vue3 からは TypeScript 対応が改善されてきました。これを期に
 
 もし導入している場合、アクセシブルなコンポーネント作りを補強するために有用な手段となります。
 
-```vue
+```html
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
@@ -289,7 +310,7 @@ const headingText = computed(() => props.headlineText);
 
 <template>
   <component :is="headlineTag">
-    {{ headingText }}
+    ﹛{ headingText }}
   </component>
 </template>
 ```
@@ -300,7 +321,7 @@ const headingText = computed(() => props.headlineText);
 
 これ以外にも画像コンポーネントのような場合は代替テキストとなる `props` を設置したり多言語対応の際は `lang` 属性にあたるものを `props` に設置するなど、はじめてコンポーネントを使う人にも必要だと分かる `props` を定義しておくとよいでしょう。
 
-```vue
+```html
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
@@ -332,7 +353,7 @@ Visually Hidden とは視覚的には確認できないが支援技術により�
 
 前述した aria-label とも似ていますがこのようなコンポーネントとすることで汎用的に使い回せます。
 
-```vue
+```html
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
@@ -357,7 +378,7 @@ const tag = computed(() => props.tag ? props.tag : 'span');
 
 また、CSS の制御よってフォーカスする場合は表示させることができます。
 
-```vue
+```html
 <style scoped>
 .visually-hidden,
 .visually-hidden-focusable:not(:focus):not(:focus-within) {
@@ -379,6 +400,8 @@ const tag = computed(() => props.tag ? props.tag : 'span');
 
 これは「スキップリンク」という、コンテンツにスキップ移動できる支援技術ユーザーのための手段として使用できます。
 
+![スクリーンショット：GitHub でのスキップリンク](../images/skip-link.png)
+
 通常、画面上には現れませんがヘッダーの内容が多い場合にコンテンツに直接スキップできるようにするものです。
 
 ### Fragments
@@ -388,10 +411,10 @@ Vue3 からは [Fragments](https://v3-migration.vuejs.org/new/fragments.html) �
 Vue2 までは `<template>` 内のルート要素は単一のものでなければなりませんでした。
 それによりコンポーネントによってはマークアップが間違っている場合がありました。
 
-```vue
+```html
 <template>
   <!-- table-columns のようなコンポーネントを想定 -->
-  <!-- vue2 までは div などをルートにしないといけなかたった -->
+  <!-- Vue2 までは div などをルートにしないといけなかたった -->
   <!-- ただし以下のマークアップは不適応 -->
   <div>
     <tr><td>項目</td></tr>
@@ -402,7 +425,7 @@ Vue2 までは `<template>` 内のルート要素は単一のものでなけれ�
 
 Fragments によりルートが単一でなくてもよくなりコンポーネントにおけるマークアップの正しさが保証されやすくなりました。
 
-```vue
+```html
 <template>
   <!-- Vue3 からは以下のように書けるようになった -->
   <tr><td>項目</td></tr>
@@ -412,11 +435,11 @@ Fragments によりルートが単一でなくてもよくなりコンポーネ�
 
 ただしコンポーネントのルート要素に親コンポーネントからの属性を自動的に付与されなくなることには注意です。
 
-```vue
+```html
 <SubmitButton disabled />
 ```
 
-```vue
+```html
 <template inheritAttrs="false">
   <!-- root にある div 要素自体に属性は継承されず、 -->
   <div>
@@ -449,6 +472,8 @@ eslint を導入しているなら [eslint-plugin-vuejs-accessibility](https://g
 構築するサイトやアプリケーションによっては不要なルールがあるかもしれません。導入前に何のルールを有効にするかを検討しておくと良いでしょう。
 
 よりマークアップに向き合って HTML の正確さを確認したい場合、[markuplint](https://github.com/markuplint/markuplint) を導入してみることも有用です。
+
+![スクリーンショット：markuplint の公式サイト](../images/markuplint.png)
 
 Vue.js のパーサーが存在するので併せて使うことで vue コンポーネント内をチェックしてくれます。
 
@@ -491,7 +516,7 @@ test('キーボード操作でクリックイベントが機能している', as
 
 正しくマークアップや WAI-ARIA を使用できれば、セマンティクスを尊重した上でテストコードが書けます。
 
-さらに [jest-axe](https://github.com/nickcolley/jest-axe) を使用することで全全体的にアクセシビリティ違反がないかをチェックすることも出来ます。
+さらに [jest-axe](https://github.com/nickcolley/jest-axe) を使用することで全体的にアクセシビリティ違反がないかをチェックすることも出来ます。
 
 ```js
 import { render } from '@testing-library/vue';
@@ -516,6 +541,8 @@ eslint 同様、ルールは独自で調整できるので必要に応じて精�
 テストコードをもってアクセシビリティの正しさを確認できたのなら次は実際のブラウザや支援技術でもチェックしてみましょう。
 
 [vue-axe](https://github.com/vue-a11y/vue-axe-next) はブラウザ上でアクセシビリティチェックができるようになるプラグインです。
+
+![スクリーンショット：vue-axe を使用した開発画面](../images/vue-axe.png)
 
 ローカル開発をしながら、問題点を潰していく際に有用なプラグインです。
 
@@ -551,6 +578,8 @@ Windows と macOS には標準でスクリーンリーダーが搭載されて�
 
 さらに Vue.js 開発とアクセシビリティの領域に足を踏み入れたくなりましたか。
 
+![スクリーンショット：Accessible Vue の公式サイト](../images/accessible-vue.png)
+
 Web アクセシビリティスペシャリストの Marcus 氏が [Accessible Vue](https://accessible-vue.com/) というコンテンツを無料で公開しています。
 
 より探求していきたい人はこちらも併せてご覧になってみてください。
@@ -559,7 +588,15 @@ Web アクセシビリティスペシャリストの Marcus 氏が [Accessible V
 
 以上で発表を終わります。ご清聴いただきありがとうございました。
 
-[^1]: https://webaim.org/projects/million/2021, https://webaim.org/projects/million/2020
+## 参考資料
+
+- [Accessibility | Vue.js](https://vuejs.org/guide/best-practices/accessibility.html)
+- [WebAIM: The WebAIM Million - The 2022 report on the accessibility of the top 1,000,000 home pages](https://webaim.org/projects/million/)
+- [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/)
+- [Accessibility Object Model | aom](https://wicg.github.io/aom/explainer.html)
+- [WAI-ARIA勉強会 - YouTube](https://www.youtube.com/watch?v=ZLL0_W5w1vo)
+
+[^1]: [https://webaim.org/projects/million/2021](https://webaim.org/projects/million/2021), [https://webaim.org/projects/million/2020](https://webaim.org/projects/million/2020)
 [^2]: [Read Me First | APG | WAI | W3C](https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/)
-[^3]: https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue
+[^3]: [https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue](https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue)
 [^4]: [Guidepup](https://github.com/guidepup/guidepup), [web-test-runner-voiceover](https://github.com/blueprintui/web-test-runner-voiceover), [VoiceOver.js](https://github.com/AccessLint/screenreaders)

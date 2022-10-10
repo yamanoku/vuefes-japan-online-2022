@@ -1,8 +1,23 @@
+---
+layout: layout
+title: To make accessible components in Vue.js
+description: yamanoku's presentation at Vue Fes Japan Online 2022
+lang: en
+---
+
 # To make accessible components in Vue.js
+
+![Thumbnail: To make accessible components in Vue.js - 2022](../images/to-make-accessible-components-in-vuejs-2022.png)
+
+## Translation Articles
+
+[English page](https://yamanoku.net/vuefes-japan-online-2022/en/) / [日本語ページ](https://yamanoku.net/vuefes-japan-online-2022/ja/)
 
 ## Introduction
 
 First, let me introduce myself.
+
+<img src="../images/yamanoku-icon.png" alt="Photo: yamanoku" width="256" height="256">
 
 My name is [yamanoku](https://twitter.com/yamanoku). I started working as a web designer and then began to get more seriously involved with web technologies as a markup engineer, developing a growing interest in the field of accessibility.
 
@@ -22,6 +37,8 @@ It is good to see the addition of this type of documentation, [as it was never m
 
 However, according to a survey by [WebAIM](https://webaim.org/), a U.S. nonprofit organization, sites using Vue.js lack accessibility support.
 
+![The WebAIM Million 2022 results for JavaScript frameworks, showing that accessibility support in Vue.js is 24.8% lower than average.](../images/the-webaim-million-2022.png)
+
 This does not mean that using a particular library or framework is not accessible, but it is a fact that support has been below average[^1] since the year before last.
 
 I am not sure how many Japanese sites are included in the surveyed sites, but as a Vue.js developer, I do not think this situation should be left unchecked.
@@ -32,15 +49,19 @@ The target audience is "people who are just starting to learn about web accessib
 
 The code introduced in this case study is based on Vue3. Please note that the code shown in this case study is based on Vue3.
 
-## Wrong Accessibility Support
+## About Wrong Accessibility Support
 
 In accessibility support, what you do for good without much understanding may have no effect, or on the contrary, it may make things worse.
 
 Let's learn about the most common mistakes in order to eliminate bad accessibility supports.
 
+![Screenshot: WAI-ARIA 1.1 Specification](../images/wai-aria-1-1.png)
+
 Many of you may have heard about WAI-ARIA before you became aware of accessibility.
 
 WAI-ARIA is a technical specification that supplements assistive technologies such as screen readers with accessible information that cannot be expressed in HTML alone.
+
+![Flow from application UI to accessibility tree to assistive technology to user](../images/accessibility-tree.png)
 
 Information about accessibility is reflected in the accessibility tree by parsing the DOM tree and CSS rendering from the browser.
 
@@ -75,7 +96,7 @@ In this pattern, there is no text within the button, so it is recognized as a "m
 So what happens in this pattern?
 
 ```html
-<a href="https://vuejs.org/" aria-label="Link">
+<a href="https://vuejs.org/" aria-label="Vue">
   <img src="link-text.png" alt="Vue.js official site">
 </a>
 ```
@@ -85,7 +106,7 @@ If there is image text inside the link, this will override the `alt` information
 This also overrides the `label` element, which reads "Input form, edit text".
 
 ```html
-<label for="text-field">名前</label>
+<label for="text-field">Name</label>
 <input type="text" aria-label="Input form" id="text-field">
 ```
 
@@ -162,7 +183,7 @@ This is a live region that is used to communicate dynamic changes within a page 
 
 Examples include changes in form input, screen transitions in SPA, warning notifications, and carousel changes.
 
-```vue
+```html
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 const count = ref<number>(0);
@@ -176,7 +197,7 @@ const personNumber = computed(() => {
   <button type="button" @click="count++">Increment</button>
   <button type="button" @click="count--">Decrement</button>
   <div role="status" aria-live="polite">
-    {{ personNumber }} persons
+    ﹛{ personNumber }} persons
   </div>
 </template>
 ```
@@ -249,7 +270,7 @@ If you are likely to use WAI-ARIA without understanding it, please stop and cons
 
 This is a useful site for understanding if you are using HTML incorrectly in your everyday writing.
 
-If you want to learn HTML in more detail, we also recommend "[HTML 解体新書](https://www.borndigital.co.jp/book/25999.html)".
+If you want to learn HTML in more detail, we also recommend "[HTML Kaitai Shinsho](https://www.borndigital.co.jp/book/25999.html)".
 
 It is the closest Japanese-language book to the HTML specification at this time, so you can use it as a reference for implementation and review.
 
@@ -271,7 +292,7 @@ TypeScript support has been improved since Vue3. Some of you may have taken this
 
 If you use, this is a useful way to reinforce the creation of accessible components.
 
-```vue
+```html
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
@@ -289,7 +310,7 @@ const headingText = computed(() => props.headlineText);
 
 <template>
   <component :is="headlineTag">
-    {{ headingText }}
+    ﹛{ headingText }}
   </component>
 </template>
 ```
@@ -300,7 +321,7 @@ The `<component>` element can contain any element by the `is` attribute, which i
 
 In addition to this, it is recommended to define `props` that are necessary for new users of the component, such as `props` for alternative text in case of image components, `props` for `lang` attribute in case of multi-language support, and so on.
 
-```vue
+```html
 <script setup lang="ts">
 import { defineProps } from 'vue';
 
@@ -332,7 +353,7 @@ It is sometimes defined in UI frameworks such as [Bootstrap](https://getbootstra
 
 It is similar to the aria-label component mentioned above, but this type of component can be used universally.
 
-```vue
+```html
 <script setup lang="ts">
 import { computed, defineProps } from 'vue';
 
@@ -357,7 +378,7 @@ It can be used to hide the Button component when there is no text, or the label 
 
 It can also be made visible when the focus is controlled by CSS.
 
-```vue
+```html
 <style scoped>
 .visually-hidden,
 .visually-hidden-focusable:not(:focus):not(:focus-within) {
@@ -379,6 +400,8 @@ It can also be made visible when the focus is controlled by CSS.
 
 This can be used as a "skip link", a means for assistive technology users to skip to content.
 
+![Screenshot: Skip link in GitHub](../images/skip-link.png)
+
 They do not usually appear on the screen, but allow users to skip directly to content when there is a lot of header content.
 
 ### Fragments
@@ -387,7 +410,7 @@ Vue3 introduces the concept of [Fragments](https://v3-migration.vuejs.org/new/fr
 
 Until Vue2, the root element in a `<template>` had to be a single one. This led to incorrect markup for some components.
 
-```vue
+```html
 <template>
   <!-- Assuming a component like table-columns -->
   <!-- in Vue2, you have to root divs, etc. -->
@@ -401,7 +424,7 @@ Until Vue2, the root element in a `<template>` had to be a single one. This led 
 
 Fragments allow for a single route and help ensure the correctness of markup in components.
 
-```vue
+```html
 <template>
   <!-- Since Vue3, you can now write the following -->
   <tr><td>Item</td></tr>
@@ -411,11 +434,11 @@ Fragments allow for a single route and help ensure the correctness of markup in 
 
 However, that the root element of the component will no longer automatically be assigned attributes from the parent component.
 
-```vue
+```html
 <SubmitButton disabled />
 ```
 
-```vue
+```html
 <template inheritAttrs="false">
   <!-- Attributes are not inherited by the div element itself at the root -->
   <div>
@@ -449,7 +472,9 @@ Depending on the site or application you are building, there may be rules that a
 
 If you want to be more markup oriented and check the accuracy of your HTML, it is also useful to introduce [markuplint](https://github.com/markuplint/markuplint).
 
-There is a Vue.js parser that can be used in conjunction with [markuplint] to check within the vue component.
+![Screenshot: markuplint official site](../images/markuplint.png)
+
+There is a Vue.js parser that can be used in conjunction with markuplint to check within the vue component.
 
 However, markuplint is not able to evaluate the content of attributes that are dynamic bindings, so they will not be passed through.
 
@@ -516,6 +541,8 @@ If you have verified accessibility correctness with the test code, the next step
 
 [vue-axe](https://github.com/vue-a11y/vue-axe-next) is a plugin that allows you to check accessibility in the browser.
 
+![Screenshot: Development screen using vue-axe](../images/vue-axe.png)
+
 This plugin is useful for squashing problems while doing local development.
 
 Keep an eye on areas you may not have noticed in the code, including contrast ratios.
@@ -550,6 +577,8 @@ However, there is no such thing as perfect accessibility support, so it is impor
 
 Want to venture further into the realm of Vue.js development and accessibility?
 
+![Screenshot: Accessible Vue official site](../images/accessible-vue.png)
+
 Mr. Marcus, a Web accessibility specialist, has made the content [Accessible Vue](https://accessible-vue.com/) available free of charge.
 
 For those who wish to explore more, please also see this page.
@@ -558,7 +587,15 @@ We hope that this presentation will lead to more Vue.js development with accessi
 
 That concludes my presentation. Thank you for your attention.
 
-[^1]: https://webaim.org/projects/million/2021, https://webaim.org/projects/million/2020
+## Reference
+
+- [Accessibility | Vue.js](https://vuejs.org/guide/best-practices/accessibility.html)
+- [WebAIM: The WebAIM Million - The 2022 report on the accessibility of the top 1,000,000 home pages](https://webaim.org/projects/million/)
+- [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/)
+- [Accessibility Object Model | aom](https://wicg.github.io/aom/explainer.html)
+- [WAI-ARIA勉強会 - YouTube](https://www.youtube.com/watch?v=ZLL0_W5w1vo)
+
+[^1]: [https://webaim.org/projects/million/2021](https://webaim.org/projects/million/2021), [https://webaim.org/projects/million/2020](https://webaim.org/projects/million/2020)
 [^2]: [Read Me First | APG | WAI | W3C](https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/)
-[^3]: https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue
+[^3]: [https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue](https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue)
 [^4]: [Guidepup](https://github.com/guidepup/guidepup), [web-test-runner-voiceover](https://github.com/blueprintui/web-test-runner-voiceover), [VoiceOver.js](https://github.com/AccessLint/screenreaders)
