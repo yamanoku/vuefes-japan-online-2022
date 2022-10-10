@@ -422,7 +422,7 @@ Fragments によりルートが単一でなくてもよくなりコンポーネ�
   <div>
     <!-- 指定した button 要素に属性が継承されるようになる -->
     <button type="submit" v-bind="$attrs">
-      送信ボタン
+      送信する
     </button>
   </div>
 </template>
