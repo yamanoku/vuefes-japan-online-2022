@@ -5,8 +5,6 @@ description: yamanoku's presentation at Vue Fes Japan Online 2022
 lang: en
 ---
 
-# To make accessible components in Vue.js
-
 ![Thumbnail: To make accessible components in Vue.js - 2022](../images/to-make-accessible-components-in-vuejs-2022.png)
 
 ## Translation Articles

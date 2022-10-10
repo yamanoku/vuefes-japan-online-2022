@@ -21,6 +21,7 @@ exports.render = (data) => {
       </head>
       <body>
         <main id="main">
+          <h1>${this.budoux(data.title)}</h1>
           ${data.content}
         </main>
         <footer>

@@ -5,8 +5,6 @@ description: やまのくの Vue Fes Japan Online 2022 の登壇資料
 lang: ja
 ---
 
-# Vue.js でアクセシブルなコンポーネントをつくるために
-
 ![サムネイル：Vue.js でアクセシブルなコンポーネントをつくるために - 2022](../images/to-make-accessible-components-in-vuejs-2022.png)
 
 ## 翻訳記事一覧
