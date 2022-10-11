@@ -29,7 +29,7 @@ lang: ja
 
 最近のフロントエンド開発において、ここに注力できることはサイトやプロダクトの価値付け、他との差別化ができる領域になってきています。
 
-Vue3 のドキュメントから[アクセシビリティに関する項目](https://vuejs.org/guide/best-practices/accessibility.html)が追加されました。アクセシビリティの基礎や、実際のユースケースの一部を学べるコンテンツになっています。
+Vue3 のドキュメントから[アクセシビリティに関する項目](https://ja.vuejs.org/guide/best-practices/accessibility.html)が追加されました。アクセシビリティの基礎や、実際のユースケースの一部を学べるコンテンツになっています。
 
 Vue2 以前では[草案という形でマージされることなく終わってしまった](https://github.com/vuejs/v2.vuejs.org/pull/1002)のでこうしたドキュメントが追加されたことは良いことです。
 
@@ -94,7 +94,7 @@ WAI-ARIA を使うことでアクセシビリティを高めることができ�
 ではこのパターンではどうなるでしょうか。
 
 ```html
-<a href="https://v3.ja.vuejs.org/" aria-label="Vue">
+<a href="https://ja.vuejs.org/" aria-label="Vue">
   <img src="link-text.png" alt="Vue.js 日本語版サイト">
 </a>
 ```
@@ -588,7 +588,6 @@ Web アクセシビリティスペシャリストの Marcus 氏が [Accessible V
 
 ## 参考資料
 
-- [Accessibility | Vue.js](https://vuejs.org/guide/best-practices/accessibility.html)
 - [WebAIM: The WebAIM Million - The 2022 report on the accessibility of the top 1,000,000 home pages](https://webaim.org/projects/million/)
 - [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/)
 - [Accessibility Object Model | aom](https://wicg.github.io/aom/explainer.html)

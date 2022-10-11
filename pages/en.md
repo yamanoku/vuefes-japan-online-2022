@@ -587,7 +587,6 @@ That concludes my presentation. Thank you for your attention.
 
 ## Reference
 
-- [Accessibility | Vue.js](https://vuejs.org/guide/best-practices/accessibility.html)
 - [WebAIM: The WebAIM Million - The 2022 report on the accessibility of the top 1,000,000 home pages](https://webaim.org/projects/million/)
 - [Accessible Rich Internet Applications (WAI-ARIA) 1.1](https://www.w3.org/TR/wai-aria-1.1/)
 - [Accessibility Object Model | aom](https://wicg.github.io/aom/explainer.html)
