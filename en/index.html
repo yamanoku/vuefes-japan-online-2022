@@ -1,0 +1,425 @@
+
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>To make accessible components in Vue.js</title>
+        <meta name="og:title" content="To make accessible components in Vue.js">
+        <meta name="og:description" content="yamanoku's presentation at Vue Fes Japan Online 2022">
+        <meta name="og:image" content="https://yamanoku.net/vuefes-japan-online-2022/images/ogp.png">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@yamanoku">
+        <meta name="twitter:image:alt" content="To make accessible components in Vue.js">
+        <meta property="og:locale" content="en">
+        <link rel="stylesheet" href="https://cdn.skypack.dev/yama-normalize">
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/highlight.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.6.0/styles/a11y-dark.min.css">
+        <script type="module">hljs.initHighlightingOnLoad()</script>
+        <style>code{font-family:SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:1em;}pre code.hljs{padding:calc(var(--rhythm)*3);}footer{padding: var(--y-rhythm-3);text-align: center;}</style>
+      </head>
+      <body>
+        <main id="main">
+          <h1><span>To make accessible components in Vue.js</span></h1>
+          <p><img src="../images/to-make-accessible-components-in-vuejs-2022.png" alt="Thumbnail: To make accessible components in Vue.js - 2022"></p>
+<h2>Translation Articles</h2>
+<p><a href="https://yamanoku.net/vuefes-japan-online-2022/en/" target="_blank" rel="noopener">English page</a> / <a href="https://yamanoku.net/vuefes-japan-online-2022/ja/" target="_blank" rel="noopener">日本語ページ</a></p>
+<h2>Introduction</h2>
+<p>First, let me introduce myself.</p>
+<img src="../images/yamanoku-icon.png" alt="Photo: yamanoku" width="256" height="256">
+<p>My name is <a href="https://twitter.com/yamanoku" target="_blank" rel="noopener">yamanoku</a>. I started working as a web designer and then began to get more seriously involved with web technologies as a markup engineer, developing a growing interest in the field of accessibility.</p>
+<p>Currently, I work for a business company, and I would like to improve the user experience by utilizing web standards technology.</p>
+<p>At this edition of Vue Fes Japan Online 2022, we will be presenting on Vue.js and the theme of accessibility, but first, I will explain why we are presenting on this theme.</p>
+<p>That's because I thought that development in Vue.js might not have much opportunity to consider accessibility.</p>
+<p>A simple explanation of accessibility is the concept of making information accessible to everyone, and putting that idea into practice on the Web is called Web Accessibility.</p>
+<p>In recent front-end development, being able to focus on this area has become an area where we can value and differentiate our sites and products from others.</p>
+<p><a href="https://vuejs.org/guide/best-practices/accessibility.html" target="_blank" rel="noopener">A section on accessibility</a> has been added from the Vue3 documentation. The content is designed to help you learn the basics of accessibility and some of the actual use cases.</p>
+<p>It's a good thing these documents have been added since <a href="https://github.com/vuejs/v2.vuejs.org/pull/1002" target="_blank" rel="noopener">they were not merged in the form of drafts</a> before Vue 2.</p>
+<p>However, a survey by the U.S. nonprofit <a href="https://webaim.org/" target="_blank" rel="noopener">WebAIM</a> found that sites using Vue.js lack accessibility.</p>
+<p><img src="../images/the-webaim-million-2022.png" alt="The WebAIM Million 2022 results for JavaScript frameworks, showing that accessibility support in Vue.js is 24.8% lower than average."></p>
+<p>This does not mean that using a particular library or framework is not accessible. But it is a fact that accessibility has been below average<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup> since the year before last.</p>
+<p>I am not sure how many Japanese sites are included in the surveyed sites, but as a Vue.js developer, I do not think this situation should be left unchecked.</p>
+<p>In this session, we will present three themes that will make it easier to address accessibility in future development with Vue.js.</p>
+<p>The target audience is &quot;people who are just starting to learn about web accessibility&quot; and &quot;people who want to improve accessibility with Vue.js&quot;.</p>
+<p>The code presented in this case is based on Vue 3. Please note that.</p>
+<h2>About Wrong Accessibility Support</h2>
+<p>Accessibility can be such that what you do for good without much understanding has no impact. On the contrary, it can get worse.</p>
+<p>Let's learn about the most common mistakes in order to eliminate bad accessibility development.</p>
+<p><img src="../images/wai-aria-1-1.png" alt="Screenshot: WAI-ARIA 1.1 Specification"></p>
+<p>Many people have heard about WAI-ARIA since they became aware of accessibility.</p>
+<p>WAI-ARIA is a technical specification that supplements assistive technologies such as screen readers with accessible information that cannot be expressed in HTML alone.</p>
+<p><img src="../images/accessibility-tree.png" alt="Flow from application UI to accessibility tree to assistive technology to user"></p>
+<p>Information about accessibility is reflected in the accessibility tree by parsing the DOM tree and CSS rendering from the browser.</p>
+<p>Then, information is delivered to users with assistive technology from accessibility APIs for each OS.</p>
+<p>WAI-ARIA is a form of semantics that can be recognized in this accessibility tree.</p>
+<p>Some people start using WAI-ARIA as a way to increase accessibility. I was one of them.</p>
+<p>However, there are some things to keep in mind when using WAI-ARIA.</p>
+<p>That means &quot;<strong>NO ARIA is better than BAD ARIA</strong>&quot;<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>.</p>
+<p>In other words, It means that it's still better accessible not to use WAI-ARIA than to use it incorrectly.</p>
+<p>In this section, I will introduce the use of WAI-ARIA in ways that are easy to make mistakes or forget during development.</p>
+<h3>aria-label</h3>
+<p>First is the aria-label, This is used when you have textual information that you want to convey to assistive technology.</p>
+<p>An example of this is a button with only an icon.</p>
+<p>In this pattern, there is no text within the button, so it is recognized as a &quot;menu, button&quot;.</p>
+<pre><code class="language-html">&lt;button type=&quot;button&quot; aria-label=&quot;menu&quot;&gt;
+  &lt;span class=&quot;fa-solid fa-bars&quot;&gt;&lt;/span&gt;
+&lt;/button&gt;
+</code></pre>
+<p>So what happens in this pattern?</p>
+<pre><code class="language-html">&lt;a href=&quot;https://vuejs.org/&quot; aria-label=&quot;Vue&quot;&gt;
+  &lt;img src=&quot;link-text.png&quot; alt=&quot;Vue.js official site&quot;&gt;
+&lt;/a&gt;
+</code></pre>
+<p>If there is image text inside the link, this will override the <code>alt</code> information and read &quot;Link, Image, Vue&quot;.</p>
+<p>This also overrides the <code>label</code> element, which reads &quot;Input form, edit text&quot;.</p>
+<pre><code class="language-html">&lt;label for=&quot;text-field&quot;&gt;Name&lt;/label&gt;
+&lt;input type=&quot;text&quot; aria-label=&quot;Input form&quot; id=&quot;text-field&quot;&gt;
+</code></pre>
+<p>In this way, aria-label sometimes overwrites the textual information that it originally wanted to convey.</p>
+<p>In order to provide equivalent information to all people, rather than giving different information only to users of assistive technology, please provide the information in visible text as much as possible.</p>
+<p>Incidentally, since WAI-ARIA 1.2, aria-label defines <code>roles</code> that must not be named, such as <code>generic roles</code> for <code>div</code> elements and <code>span</code> elements. Please check <a href="https://www.w3.org/TR/wai-aria-1.2/#namefromprohibited" target="_blank" rel="noopener">the specification</a> for details.</p>
+<h3>aria-hidden</h3>
+<p>Next, about aria-hidden.</p>
+<p>aria-hidden removes the element and all its children from the accessibility tree.</p>
+<p>Examples include decorative elements that do not need to be communicated to assistive technology, duplicate content, and hiding other content when a modal is displayed.</p>
+<pre><code class="language-html">&lt;main class=&quot;content&quot; aria-hidden=&quot;true&quot;&gt;
+  The content itself is hidden.
+&lt;/main&gt;
+&lt;div
+  id=&quot;dialog&quot;
+  class=&quot;dialog-container&quot;
+  aria-labelledby=&quot;dialog-title&quot;
+  aria-describedby=&quot;dialog-description&quot;
+  aria-modal=&quot;true&quot;
+  role=&quot;dialog&quot;&gt;
+  &lt;div&gt;
+    &lt;h1 id=&quot;dialog-title&quot;&gt;title&lt;/h1&gt;
+    &lt;p id=&quot;dialog-description&quot;&gt;description&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>aria-hidden is very powerful, so be sure you know the scope of its effect before you use it.</p>
+<p>For example, if you use aria-hidden on a parent element that covers a modal, everything will be hidden, including the modal.</p>
+<p>All that assistive technology support is wasted.</p>
+<pre><code class="language-html">&lt;div aria-hidden=&quot;true&quot;&gt;&lt;!-- Parent is hidden by aria-hidden --&gt;
+  &lt;main class=&quot;content&quot;&gt;
+    Content is hidden.
+  &lt;/main&gt;
+  &lt;div
+    id=&quot;dialog&quot;
+    class=&quot;dialog-container&quot;
+    aria-modal=&quot;true&quot;
+    role=&quot;dialog&quot;&gt;
+    The modal itself is also hidden.
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Also, be careful not to use it on the element to be focused or the element that contains it.</p>
+<p>Because you can focused, but you can't recognize what that element is.</p>
+<pre><code class="language-html">&lt;a href=&quot;https://vuefes.jp/2022/&quot; aria-hidden=&quot;true&quot;&gt;
+  Vue Fes Japan Online 2022
+&lt;/a&gt;
+</code></pre>
+<p>Consider using the CSS <code>display: none</code> or <code>hidden</code> attributes if you want to completely remove the element rather than hide it temporarily.</p>
+<h3>aria-live</h3>
+<p>Next, about aria-live.</p>
+<p>It's called a live region, and it's used to communicate any dynamic changes in the page to assistive technology.</p>
+<p>Examples include changes in form input, screen transitions in SPA, warning notifications, and carousel changes.</p>
+<pre><code class="language-html">&lt;script setup lang=&quot;ts&quot;&gt;
+import { ref, computed } from 'vue'
+const count = ref&lt;number&gt;(0);
+const personNumber = computed(() =&gt; {
+  if (count.value &lt; 0) return count.value = 0;
+  return count.value;
+});
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;button type=&quot;button&quot; @click=&quot;count++&quot;&gt;Increment&lt;/button&gt;
+  &lt;button type=&quot;button&quot; @click=&quot;count--&quot;&gt;Decrement&lt;/button&gt;
+  &lt;div role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;
+    ﹛{ personNumber }} persons
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>For normal notifications, it is recommended to use <code>aria-live=&quot;polite&quot;</code>, which reads out the operation after it is completed.</p>
+<p>The <code>aria-live=&quot;assertive&quot;</code> will interrupt other operations to notify you when there are dynamic changes.</p>
+<p>This is fine as an alert, but should not be used with the wrong value, as constant notification of information during an automatically switching carousel or form entry would severely damage the user experience.</p>
+<h3>aria-current</h3>
+<p>Finally, about aria-current.</p>
+<p>This is used to convey the current position.</p>
+<p>Examples include pagination, navigation, and breadcrumb links.</p>
+<p>As a stand-alone WAI-ARIA, you'll probably use it less frequently than the ones we've discussed so far.</p>
+<p>However, it is used in libraries that are often seen by those who develop with Vue.js.</p>
+<p>It is the <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>.</p>
+<p>Sometimes used in <code>&lt;router-link&gt;</code> and sometimes in <code>&lt;nuxt-link&gt;</code>, the standard link component of Nuxt.js.</p>
+<pre><code class="language-html">&lt;!-- When /about is accessed, it is drawn with the a element with aria-current=&quot;page&quot; --&gt;
+&lt;router-link to=&quot;/about&quot;&gt;About page&lt;/router-link&gt;
+&lt;!-- In the case of Nuxt.js --&gt;
+&lt;nuxt-link to=&quot;/about&quot;&gt;About page&lt;/nuxt-link&gt;
+</code></pre>
+<p>If the link matches the current URL path, the link will have <code>aria-current=&quot;page&quot;</code>.</p>
+<p>This is useful if the link text itself matches the page title.</p>
+<p>But if you put this element at random, the information about what is in the current position becomes cumbersome.</p>
+<pre><code class="language-html">&lt;div&gt;
+  &lt;a href=&quot;/about&quot; aria-current=&quot;page&quot;&gt;About page&lt;/a&gt;
+  &lt;!-- ... --&gt;
+  &lt;!-- ... --&gt;
+  &lt;!-- ... --&gt;
+  &lt;a href=&quot;/about&quot; aria-current=&quot;page&quot;&gt;About page&lt;/a&gt;
+  &lt;!-- ... --&gt;
+  &lt;!-- ... --&gt;
+  &lt;a href=&quot;/about&quot; aria-current=&quot;page&quot;&gt;About page&lt;/a&gt;
+&lt;/div&gt;
+</code></pre>
+<p>When markup, be aware of the grouping of links and the areas where they will be placed.</p>
+<p>By the way, Vue Router has an API to control the aria-current part<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>.</p>
+<p>There are multiple values that can indicate step, date, and current time information. Let's check to see if the aria-current value is what you intended.</p>
+<hr>
+<p>In this way, some elements of WAI-ARIA cannot be used as they are, and their unintentional use may affect the application.</p>
+<p>You can easily create something that isn't accessible by misusing it.</p>
+<p>On the other hand, using HTML roughly guarantees the same behavior in browser standards.</p>
+<p>If you're not sure about WAI-ARIA and are about to use it, you might want to stop and consider whether you can express it in HTML alone without using them.</p>
+<p><a href="https://developer.mozilla.org/en-US/" target="_blank" rel="noopener">MDN Web Docs</a>, a collection of web technology information for developers, lists accessibility concerns on the HTML elements page.</p>
+<p>It's a useful site to understand if you're using HTML the way you usually write.</p>
+<p>If you want to learn HTML in more detail, we also recommend &quot;<a href="https://www.borndigital.co.jp/book/25999.html" target="_blank" rel="noopener">HTML Kaitai Shinsho</a>&quot;.</p>
+<p>It is the closest Japanese-language book to the HTML specification at this time, so you can use it as a reference for implementation and review.</p>
+<hr>
+<h2>Make versatile, accessible components</h2>
+<p>The previous case study illustrates the need to use WAI-ARIA with caution.</p>
+<p>However, it is difficult to develop while confirming each and every one of them.</p>
+<p>Therefore, by including rules in the component design, it is easier to develop with less inconsistency in recognition in team development.</p>
+<p>Next, we will introduce some hints on how to create accessible components that can be used versatile.</p>
+<h3>Reinforce with TypeScript</h3>
+<p>TypeScript support has been improved since Vue3. Some of you may have taken this opportunity to start using it.</p>
+<p>If you use TypeScript, this is a useful way to reinforce the creation of accessible components.</p>
+<pre><code class="language-html">&lt;script setup lang=&quot;ts&quot;&gt;
+import { computed, defineProps } from 'vue';
+
+type Props = {
+  // Type annotate the level of the heading element with union type
+  headlineLevel: 1 | 2 | 3 | 4 | 5 | 6;
+  headlineText: string;
+}
+const props = defineProps&lt;Props&gt;();
+
+// Use props heading level to represent like h1
+const headlineTag = computed(() =&gt; `h${props.headlineLevel}`);
+const headingText = computed(() =&gt; props.headlineText);
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;component :is=&quot;headlineTag&quot;&gt;
+    ﹛{ headingText }}
+  &lt;/component&gt;
+&lt;/template&gt;
+</code></pre>
+<p>This pattern implements a generic use of the heading component.</p>
+<p>The <code>&lt;component&gt;</code> element can contain any element by the <code>is</code> attribute, which is controlled by the value of <code>props</code>.</p>
+<p>In addition to this, it is recommended to define <code>props</code> that are necessary for new users of the component, such as <code>props</code> for alternative text in case of image components, <code>props</code> for <code>lang</code> attribute in case of multi-language support, and so on.</p>
+<pre><code class="language-html">&lt;script setup lang=&quot;ts&quot;&gt;
+import { defineProps } from 'vue';
+
+type Props = {
+  altText: string;
+  lang: 'ja' | 'en' | 'fr';
+}
+
+defineProps&lt;Props&gt;();
+&lt;/script&gt;
+</code></pre>
+<p>You can also use type checking tools such as <a href="https://github.com/johnsoncodehk/volar/tree/10d1a6a8b4011adee0a7c309da25caae7fb4fea9/vue-language-tools/vue-tsc" target="_blank" rel="noopener">vue-tsc</a> to check attribute values in <code>&lt;template&gt;</code>.</p>
+<pre><code class="language-html">&lt;!-- The type check tells me that aria-current cannot use empty characters --&gt;
+&lt;a :href=&quot;url&quot; :aria-current=&quot;isCurrentPage: ? 'page' : ''&quot;&gt;
+  Link
+&lt;/a&gt;
+</code></pre>
+<p>Watch for wrong values here.</p>
+<h3>Visually Hidden</h3>
+<p>Visually Hidden is a method that cannot be seen visually but can be seen with assistive technology.</p>
+<p>It is sometimes defined in UI frameworks such as <a href="https://getbootstrap.com/docs/5.0/helpers/visually-hidden/" target="_blank" rel="noopener">Bootstrap</a>.</p>
+<p>It is similar to the aria-label component mentioned above, but this type of component can be used universally.</p>
+<pre><code class="language-html">&lt;script setup lang=&quot;ts&quot;&gt;
+import { computed, defineProps } from 'vue';
+
+type Props = {
+  isFocusable?: boolean;
+  tag?: 'div' | 'span';
+};
+
+const props = defineProps&lt;Props&gt;();
+const focusedClass = computed(() =&gt; props.isFocusable ? 'visually-hidden-focusable' : 'visually-hidden');
+const tag = computed(() =&gt; props.tag ? props.tag : 'span');
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;component :is=&quot;tag&quot; :class=&quot;focusedClass&quot;&gt;
+    &lt;slot /&gt;
+  &lt;/component&gt;
+&lt;/template&gt;
+</code></pre>
+<p>It can be used to hide the Button component when there is no text, or the label portion of a form part.</p>
+<p>It can also be made visible when the focus is controlled by CSS.</p>
+<pre><code class="language-html">&lt;style scoped&gt;
+.visually-hidden,
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 4px;
+  height: 4px;
+  opacity: 0;
+  overflow: hidden;
+  border: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  visibility: visible;
+}
+&lt;/style&gt;
+</code></pre>
+<p>This can be used as a &quot;skip link&quot;, a means for assistive technology users to skip to content.</p>
+<p><img src="../images/skip-link.png" alt="Screenshot: Skip link in GitHub"></p>
+<p>It does not usually appear on the screen, but allows you to skip directly to the content when there is a lot of header content.</p>
+<h3>Fragments</h3>
+<p>Vue3 introduces the concept of <a href="https://v3-migration.vuejs.org/new/fragments.html" target="_blank" rel="noopener">Fragments</a>.</p>
+<p>Until Vue2, the root element in a <code>&lt;template&gt;</code> had to be a single one. This led to incorrect markup for some components.</p>
+<pre><code class="language-html">&lt;template&gt;
+  &lt;!-- Assuming a component like table-columns --&gt;
+  &lt;!-- in Vue2, you have to root divs, etc. --&gt;
+  &lt;!-- but the following markup is not applicable --&gt;
+  &lt;div&gt;
+    &lt;tr&gt;&lt;td&gt;Item&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Contents&lt;/td&gt;&lt;/tr&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>Fragments allow for a single route and help ensure the correctness of markup in components.</p>
+<pre><code class="language-html">&lt;template&gt;
+  &lt;!-- Since Vue3, you can now write the following --&gt;
+  &lt;tr&gt;&lt;td&gt;Item&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Contents&lt;/td&gt;&lt;/tr&gt;
+&lt;/template&gt;
+</code></pre>
+<p>However, that the root element of the component will no longer automatically be assigned attributes from the parent component.</p>
+<pre><code class="language-html">&lt;SubmitButton disabled /&gt;
+</code></pre>
+<pre><code class="language-html">&lt;template inheritAttrs=&quot;false&quot;&gt;
+  &lt;!-- Attributes are not inherited by the div element itself at the root --&gt;
+  &lt;div&gt;
+    &lt;!-- By the button element you specify --&gt;
+    &lt;button type=&quot;submit&quot; v-bind=&quot;$attrs&quot;&gt;
+      Submit
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+</code></pre>
+<p>In that case, set <code>inheritAttrs</code> to <code>false</code> and add <code>v-bind=&quot;$attrs&quot;</code> to the element that will receive the attribute.</p>
+<h2>Accessibility Testing and Checking</h2>
+<p>Have we created an accessible component? That's very nice!</p>
+<p>But there is something more important than creating a component: making sure it works properly.</p>
+<p>So, let's do some testing and checking to make sure that the component we have created is really OK.</p>
+<h3>Linter</h3>
+<p>First, check with a static analysis tool.</p>
+<p>If you have eslint installed, I recommend using <a href="https://github.com/vue-a11y/eslint-plugin-vuejs-accessibility" target="_blank" rel="noopener">eslint-plugin-vuejs-accessibility</a>.</p>
+<p>This is an eslint plugin that will point out if there is code in your Vue.js code that compromises accessibility.</p>
+<p>Depending on the site or application you are building, there may be rules that are unnecessary. It is a good idea to consider what rules to enable before implementing.</p>
+<p>If you want to be more markup oriented and check the accuracy of your HTML, it is also useful to introduce <a href="https://github.com/markuplint/markuplint" target="_blank" rel="noopener">markuplint</a>.</p>
+<p><img src="../images/markuplint.png" alt="Screenshot: markuplint official site"></p>
+<p>There is a Vue.js parser that can be used in conjunction with markuplint to check within the vue component.</p>
+<p>However, markuplint is not able to evaluate the content of attributes that are dynamic bindings, so they will be ignored.</p>
+<pre><code class="language-html">&lt;!-- The alt contains nothing, but is not evaluated by markuplint. --&gt;
+&lt;img src=&quot;image.png&quot; :alt=&quot;null&quot;&gt;
+</code></pre>
+<p>In this case, you may want to use the aforementioned TypeScript type definitions and <code>props</code> to receive the correct content from the parent, or check markuplint when static HTML or based on the HTML of a snapshot test.</p>
+<h3>Integration test</h3>
+<p>Have you deployed <a href="https://jestjs.io/" target="_blank" rel="noopener">Jest</a> for front-end testing? If so, you are in luck.</p>
+<p>Let's use <a href="https://testing-library.com/" target="_blank" rel="noopener">testing-library</a> to write a coupled test of the behavior for an assistive technology user.</p>
+<pre><code class="language-js">import { render, screen } from '@testing-library/vue';
+import keyboardOnlyUserEvent from 'keyboard-testing-library/dist/require';
+import IncrementButton from './IncrementButton.vue';
+
+test('Click events are functioning with keyboard operation', async () =&gt; {
+  render(IncrementButton);
+  const button = screen.getByRole('button', {name: 'increment'});
+
+  await keyboardOnlyUserEvent.navigateToAndPressEnter(button);
+  await keyboardOnlyUserEvent.navigateToAndPressEnter(button);
+
+  expect(screen.getByRole('region', {name: 'Times clicked: 2')).toBeTruthy();
+});
+</code></pre>
+<p>This test case uses <code>getByRole</code> to get the <code>role</code> of an element and check the internal text.</p>
+<p>It also uses the <a href="https://github.com/Grunet/keyboard-testing-library" target="_blank" rel="noopener">testing-library extension that does keyboard testing</a> to check if it works correctly.</p>
+<p>You can also tab and click in <code>userEvent</code>, but this is a more concise and understandable form.</p>
+<p>If you can use the correct markup and WAI-ARIA, you can write your test code in a way that respects the semantics.</p>
+<p>In addition, you can use <a href="https://github.com/nickcolley/jest-axe" target="_blank" rel="noopener">jest-axe</a> to check for overall accessibility violations.</p>
+<pre><code class="language-js">import { render } from '@testing-library/vue';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import App from './App.vue';
+
+expect.extend(toHaveNoViolations);
+
+it('Rendered results do not violate accessibility', async () =&gt; {
+  const { container } = render(&lt;App/&gt;);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+</code></pre>
+<p>This is a Jest matcher that uses the accessibility verification library engine called <a href="https://www.deque.com/axe/" target="_blank" rel="noopener">axe</a>.</p>
+<p>Like eslint, the rules can be adjusted on your own, so you can scrutinize them as needed.</p>
+<h3>Check Browser and Assistive Technology</h3>
+<p>If you have verified accessibility correctness with the test code, the next step is to check it with actual browsers and assistive technologies as well.</p>
+<p><a href="https://github.com/vue-a11y/vue-axe-next" target="_blank" rel="noopener">vue-axe</a> is a plugin that allows you to check accessibility in the browser.</p>
+<p><img src="../images/vue-axe.png" alt="Screenshot: Development screen using vue-axe"></p>
+<p>This plugin is useful for squashing problems while doing local development.</p>
+<p>Keep an eye on areas you may not have noticed in the code, including contrast ratios.</p>
+<h4>Check keyboard operation</h4>
+<p>Now that you've verified accessibility with a test code, it's time to check it out with an actual browser or assistive technology.</p>
+<p>For form elements and links, check if the tab key can be used for transitions and operations.</p>
+<p>Alternatively, you can check the focus behavior through E2E testing.</p>
+<p>Check that you can focus in the expected order.</p>
+<p>You can use the extension <a href="https://chrome.google.com/webstore/detail/taba11y/aocppmckdocdjkphmofnklcjhdidgmga" target="_blank" rel="noopener">taba11y</a> to visualize the focus order in the browser.</p>
+<p>Incidentally, Firefox's DevTools provides a standard function to check the focus order.</p>
+<h4>Screen reader</h4>
+<p>Let's check how screen reader, one of the assistive technologies, are used in practice.</p>
+<p>Windows and macOS come standard with a screen reader, and for Windows only, there is an OSS screen reader called <a href="https://www.nvda.jp/en/" target="_blank" rel="noopener">NVDA</a>.</p>
+<p>There are also tools<sup class="footnote-ref"><a href="#fn4" id="fnref4">[4]</a></sup> available for automated testing, although only for certain assistive technologies.</p>
+<h2>Conclusion</h2>
+<p>There are many other accessibility considerations beyond those discussed in this article. It is not something that should only be considered in front-end development.</p>
+<p>However, there is no such thing as perfect accessibility development, so it is important to fix mistakes as you find them.</p>
+<p>Want to venture further into the realm of Vue.js development and accessibility?</p>
+<p><img src="../images/accessible-vue.png" alt="Screenshot: Accessible Vue official site"></p>
+<p>Mr. Marcus, a Web accessibility specialist, has made content <a href="https://accessible-vue.com/" target="_blank" rel="noopener">Accessible Vue</a> available free of charge.</p>
+<p>If you'd like to explore it further, check it out.</p>
+<p>With this presentation, I hope to see an increase in the development of Vue.js with accessibility in mind and the creation of accessible sites and applications.</p>
+<p>This concludes my presentation. Thank you for your attention.</p>
+<h2>Reference</h2>
+<ul>
+<li><a href="https://webaim.org/projects/million/" target="_blank" rel="noopener">WebAIM: The WebAIM Million - The 2022 report on the accessibility of the top 1,000,000 home pages</a></li>
+<li><a href="https://www.w3.org/TR/wai-aria-1.1/" target="_blank" rel="noopener">Accessible Rich Internet Applications (WAI-ARIA) 1.1</a></li>
+<li><a href="https://wicg.github.io/aom/explainer.html" target="_blank" rel="noopener">Accessibility Object Model | aom</a></li>
+<li><a href="https://www.youtube.com/watch?v=ZLL0_W5w1vo" target="_blank" rel="noopener">WAI-ARIA勉強会 - YouTube</a></li>
+</ul>
+<hr class="footnotes-sep">
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><a href="https://webaim.org/projects/million/2021" target="_blank" rel="noopener">https://webaim.org/projects/million/2021</a>, <a href="https://webaim.org/projects/million/2020" target="_blank" rel="noopener">https://webaim.org/projects/million/2020</a> <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn2" class="footnote-item"><p><a href="https://www.w3.org/WAI/ARIA/apg/practices/read-me-first/" target="_blank" rel="noopener">Read Me First | APG | WAI | W3C</a> <a href="#fnref2" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn3" class="footnote-item"><p><a href="https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue" target="_blank" rel="noopener">https://router.vuejs.org/api/interfaces/routerlinkprops.html#ariacurrentvalue</a> <a href="#fnref3" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn4" class="footnote-item"><p><a href="https://github.com/guidepup/guidepup" target="_blank" rel="noopener">Guidepup</a>, <a href="https://github.com/blueprintui/web-test-runner-voiceover" target="_blank" rel="noopener">web-test-runner-voiceover</a>, <a href="https://github.com/AccessLint/screenreaders" target="_blank" rel="noopener">VoiceOver.js</a> <a href="#fnref4" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+        </main>
+        <footer>
+          <p>Copyright 2022, Okuto Oyama</p>
+          <p>Source : <a href="https://github.com/yamanoku/vuefes-japan-online-2022/" target="_blank" rel="noopener">yamanoku/vuefes-japan-online-2022</a></p>
+        </footer>
+      </body>
+    </html>
+  
