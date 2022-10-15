@@ -21,23 +21,23 @@ My name is [yamanoku](https://twitter.com/yamanoku). I started working as a web 
 
 Currently, I work for a business company, and I would like to improve the user experience by utilizing web standards technology.
 
-I will be giving a presentation on Vue.js and accessibility at Vue Fes Japan Online 2022, but first, let me explain why I am giving this presentation.
+At this edition of Vue Fes Japan Online 2022, we will be presenting on Vue.js and the theme of accessibility, but first, I will explain why we are presenting on this theme.
 
-First, I would like to explain why I am presenting this topic. It is because I think that there are few opportunities to consider accessibility when developing with Vue.js.
+That's because I thought that development in Vue.js might not have much opportunity to consider accessibility.
 
-To explain accessibility simply, it is the concept of making information accessible to everyone, and Web accessibility is the implementation of this concept on the Web.
+A simple explanation of accessibility is the concept of making information accessible to everyone, and putting that idea into practice on the Web is called Web Accessibility.
 
 In recent front-end development, being able to focus on this area has become an area where we can value and differentiate our sites and products from others.
 
 [A section on accessibility](https://vuejs.org/guide/best-practices/accessibility.html) has been added from the Vue3 documentation. The content is designed to help you learn the basics of accessibility and some of the actual use cases.
 
-It is good to see the addition of this type of documentation, [as it was never merged into](https://github.com/vuejs/v2.vuejs.org/pull/1002) Vue2 or before.
+It's a good thing these documents have been added since [they were not merged in the form of drafts](https://github.com/vuejs/v2.vuejs.org/pull/1002) before Vue 2.
 
-However, according to a survey by [WebAIM](https://webaim.org/), a U.S. nonprofit organization, sites using Vue.js lack accessibility support.
+However, a survey by the U.S. nonprofit [WebAIM](https://webaim.org/) found that sites using Vue.js lack accessibility.
 
 ![The WebAIM Million 2022 results for JavaScript frameworks, showing that accessibility support in Vue.js is 24.8% lower than average.](../images/the-webaim-million-2022.png)
 
-This does not mean that using a particular library or framework is not accessible, but it is a fact that support has been below average[^1] since the year before last.
+This does not mean that using a particular library or framework is not accessible. But it is a fact that accessibility has been below average[^1] since the year before last.
 
 I am not sure how many Japanese sites are included in the surveyed sites, but as a Vue.js developer, I do not think this situation should be left unchecked.
 
@@ -45,17 +45,17 @@ In this session, we will present three themes that will make it easier to addres
 
 The target audience is "people who are just starting to learn about web accessibility" and "people who want to improve accessibility with Vue.js".
 
-The code introduced in this case study is based on Vue3. Please note that the code shown in this case study is based on Vue3.
+The code presented in this case is based on Vue 3. Please note that.
 
 ## About Wrong Accessibility Support
 
-In accessibility support, what you do for good without much understanding may have no effect, or on the contrary, it may make things worse.
+Accessibility can be such that what you do for good without much understanding has no impact. On the contrary, it can get worse.
 
-Let's learn about the most common mistakes in order to eliminate bad accessibility supports.
+Let's learn about the most common mistakes in order to eliminate bad accessibility development.
 
 ![Screenshot: WAI-ARIA 1.1 Specification](../images/wai-aria-1-1.png)
 
-Many of you may have heard about WAI-ARIA before you became aware of accessibility.
+Many people have heard about WAI-ARIA since they became aware of accessibility.
 
 WAI-ARIA is a technical specification that supplements assistive technologies such as screen readers with accessible information that cannot be expressed in HTML alone.
 
@@ -73,17 +73,17 @@ However, there are some things to keep in mind when using WAI-ARIA.
 
 That means "**NO ARIA is better than BAD ARIA**"[^2].
 
-In other words, if you use WAI-ARIA wrongly, it is still better to not use it as an accessibility measure.
+In other words, It means that it's still better accessible not to use WAI-ARIA than to use it incorrectly.
 
-In this article, we will introduce some of the things that can easily go wrong when using WAI-ARIA, as well as some of the things that we tend to forget to be aware of when developing WAI-ARIA.
+In this section, I will introduce the use of WAI-ARIA in ways that are easy to make mistakes or forget during development.
 
 ### aria-label
 
-First is the aria-label, which is used when there is textual information to be conveyed to assistive technology.
+First is the aria-label, This is used when you have textual information that you want to convey to assistive technology.
 
 An example of this is a button with only an icon.
 
-In this pattern, there is no text within the button, so it is recognized as a "menu, button.
+In this pattern, there is no text within the button, so it is recognized as a "menu, button".
 
 ```html
 <button type="button" aria-label="menu">
@@ -108,7 +108,7 @@ This also overrides the `label` element, which reads "Input form, edit text".
 <input type="text" aria-label="Input form" id="text-field">
 ```
 
-Thus, aria-label may overwrite textual information that was originally intended to be conveyed.
+In this way, aria-label sometimes overwrites the textual information that it originally wanted to convey.
 
 In order to provide equivalent information to all people, rather than giving different information only to users of assistive technology, please provide the information in visible text as much as possible.
 
@@ -116,7 +116,7 @@ Incidentally, since WAI-ARIA 1.2, aria-label defines `roles` that must not be na
 
 ### aria-hidden
 
-Next, let's take a look at aria-hidden.
+Next, about aria-hidden.
 
 aria-hidden removes the element and all its children from the accessibility tree.
 
@@ -144,7 +144,7 @@ aria-hidden is very powerful, so be sure you know the scope of its effect before
 
 For example, if you use aria-hidden on a parent element that covers a modal, everything will be hidden, including the modal.
 
-This is a loss of assistive technology support.
+All that assistive technology support is wasted.
 
 ```html
 <div aria-hidden="true"><!-- Parent is hidden by aria-hidden -->
@@ -163,7 +163,7 @@ This is a loss of assistive technology support.
 
 Also, be careful not to use it on the element to be focused or the element that contains it.
 
-Even if the focus itself is possible, you will not be able to recognize what the element is.
+Because you can focused, but you can't recognize what that element is.
 
 ```html
 <a href="https://vuefes.jp/2022/" aria-hidden="true">
@@ -175,9 +175,9 @@ Consider using the CSS `display: none` or `hidden` attributes if you want to com
 
 ### aria-live
 
-Next, let's talk about aria-live.
+Next, about aria-live.
 
-This is a live region that is used to communicate dynamic changes within a page to assistive technologies.
+It's called a live region, and it's used to communicate any dynamic changes in the page to assistive technology.
 
 Examples include changes in form input, screen transitions in SPA, warning notifications, and carousel changes.
 
@@ -208,19 +208,19 @@ This is fine as an alert, but should not be used with the wrong value, as consta
 
 ### aria-current
 
-Finally, let's look at aria-current.
+Finally, about aria-current.
 
 This is used to convey the current position.
 
 Examples include pagination, navigation, and breadcrumb links.
 
-As a stand-alone WAI-ARIA, it will not be used as often as the ones we have described so far.
+As a stand-alone WAI-ARIA, you'll probably use it less frequently than the ones we've discussed so far.
 
 However, it is used in libraries that are often seen by those who develop with Vue.js.
 
 It is the [Vue Router](https://router.vuejs.org/).
 
-Sometimes used in `<router-link>` and sometimes in `<nuxt-link>`, the standard linking component of Nuxt.js.
+Sometimes used in `<router-link>` and sometimes in `<nuxt-link>`, the standard link component of Nuxt.js.
 
 ```html
 <!-- When /about is accessed, it is drawn with the a element with aria-current="page" -->
@@ -233,7 +233,7 @@ If the link matches the current URL path, the link will have `aria-current="page
 
 This is useful if the link text itself matches the page title.
 
-However, if this element is placed randomly, the information about what is the current location will be complicated.
+But if you put this element at random, the information about what is in the current position becomes cumbersome.
 
 ```html
 <div>
@@ -256,17 +256,17 @@ There are multiple values that can indicate step, date, and current time informa
 
 ---
 
-Thus, some elements of WAI-ARIA cannot be used as they are, and their unintentional use may affect the application.
+In this way, some elements of WAI-ARIA cannot be used as they are, and their unintentional use may affect the application.
 
-The wrong use of WAI-ARIA can easily result in a non-accessible product.
+You can easily create something that isn't accessible by misusing it.
 
 On the other hand, using HTML roughly guarantees the same behavior in browser standards.
 
-If you are likely to use WAI-ARIA without understanding it, please stop and consider whether it is possible to use HTML alone without using WAI-ARIA.
+If you're not sure about WAI-ARIA and are about to use it, you might want to stop and consider whether you can express it in HTML alone without using them.
 
 [MDN Web Docs](https://developer.mozilla.org/en-US/), a collection of web technology information for developers, lists accessibility concerns on the HTML elements page.
 
-This is a useful site for understanding if you are using HTML incorrectly in your everyday writing.
+It's a useful site to understand if you're using HTML the way you usually write.
 
 If you want to learn HTML in more detail, we also recommend "[HTML Kaitai Shinsho](https://www.borndigital.co.jp/book/25999.html)".
 
@@ -280,7 +280,7 @@ The previous case study illustrates the need to use WAI-ARIA with caution.
 
 However, it is difficult to develop while confirming each and every one of them.
 
-Therefore, by including the rules in the component design, it will be easier for the team development to reduce the discrepancies in understanding.
+Therefore, by including rules in the component design, it is easier to develop with less inconsistency in recognition in team development.
 
 Next, we will introduce some hints on how to create accessible components that can be used versatile.
 
@@ -288,7 +288,7 @@ Next, we will introduce some hints on how to create accessible components that c
 
 TypeScript support has been improved since Vue3. Some of you may have taken this opportunity to start using it.
 
-If you use, this is a useful way to reinforce the creation of accessible components.
+If you use TypeScript, this is a useful way to reinforce the creation of accessible components.
 
 ```html
 <script setup lang="ts">
@@ -332,7 +332,7 @@ defineProps<Props>();
 </script>
 ```
 
-You can also use type checking tools such as [vue-tsc](https://github.com/johnsoncodehk/volar) to check attribute values in `<template>`.
+You can also use type checking tools such as [vue-tsc](https://github.com/johnsoncodehk/volar/tree/10d1a6a8b4011adee0a7c309da25caae7fb4fea9/vue-language-tools/vue-tsc) to check attribute values in `<template>`.
 
 ```html
 <!-- The type check tells me that aria-current cannot use empty characters -->
@@ -400,7 +400,7 @@ This can be used as a "skip link", a means for assistive technology users to ski
 
 ![Screenshot: Skip link in GitHub](../images/skip-link.png)
 
-They do not usually appear on the screen, but allow users to skip directly to content when there is a lot of header content.
+It does not usually appear on the screen, but allows you to skip directly to the content when there is a lot of header content.
 
 ### Fragments
 
@@ -454,7 +454,7 @@ In that case, set `inheritAttrs` to `false` and add `v-bind="$attrs"` to the ele
 
 Have we created an accessible component? That's very nice!
 
-But there is something more important than creating a component. But there is something more important than creating a component: making sure it works properly.
+But there is something more important than creating a component: making sure it works properly.
 
 So, let's do some testing and checking to make sure that the component we have created is really OK.
 
@@ -474,14 +474,14 @@ If you want to be more markup oriented and check the accuracy of your HTML, it i
 
 There is a Vue.js parser that can be used in conjunction with markuplint to check within the vue component.
 
-However, markuplint is not able to evaluate the content of attributes that are dynamic bindings, so they will not be passed through.
+However, markuplint is not able to evaluate the content of attributes that are dynamic bindings, so they will be ignored.
 
 ```html
 <!-- The alt contains nothing, but is not evaluated by markuplint. -->
 <img src="image.png" :alt="null">
 ```
 
-In this case, you may want to use the aforementioned TypeScript type definitions and `props` to receive the correct content from the parent, or use markuplint to check static HTML output or snapshot test HTML.
+In this case, you may want to use the aforementioned TypeScript type definitions and `props` to receive the correct content from the parent, or check markuplint when static HTML or based on the HTML of a snapshot test.
 
 ### Integration test
 
@@ -509,7 +509,7 @@ This test case uses `getByRole` to get the `role` of an element and check the in
 
 It also uses the [testing-library extension that does keyboard testing](https://github.com/Grunet/keyboard-testing-library) to check if it works correctly.
 
-You can also use `userEvent` to move tabs and click, but this is simpler and easier to understand.
+You can also tab and click in `userEvent`, but this is a more concise and understandable form.
 
 If you can use the correct markup and WAI-ARIA, you can write your test code in a way that respects the semantics.
 
@@ -547,7 +547,7 @@ Keep an eye on areas you may not have noticed in the code, including contrast ra
 
 #### Check keyboard operation
 
-The previous test described keyboard operation, but let's also check if keyboard operation is possible in the actual browser.
+Now that you've verified accessibility with a test code, it's time to check it out with an actual browser or assistive technology.
 
 For form elements and links, check if the tab key can be used for transitions and operations.
 
@@ -571,19 +571,19 @@ There are also tools[^4] available for automated testing, although only for cert
 
 There are many other accessibility considerations beyond those discussed in this article. It is not something that should only be considered in front-end development.
 
-However, there is no such thing as perfect accessibility support, so it is important to fix mistakes as you find them.
+However, there is no such thing as perfect accessibility development, so it is important to fix mistakes as you find them.
 
 Want to venture further into the realm of Vue.js development and accessibility?
 
 ![Screenshot: Accessible Vue official site](../images/accessible-vue.png)
 
-Mr. Marcus, a Web accessibility specialist, has made the content [Accessible Vue](https://accessible-vue.com/) available free of charge.
+Mr. Marcus, a Web accessibility specialist, has made content [Accessible Vue](https://accessible-vue.com/) available free of charge.
 
-For those who wish to explore more, please also see this page.
+If you'd like to explore it further, check it out.
 
-We hope that this presentation will lead to more Vue.js development with accessibility in mind and the creation of accessible sites and applications.
+With this presentation, I hope to see an increase in the development of Vue.js with accessibility in mind and the creation of accessible sites and applications.
 
-That concludes my presentation. Thank you for your attention.
+This concludes my presentation. Thank you for your attention.
 
 ## Reference
 
