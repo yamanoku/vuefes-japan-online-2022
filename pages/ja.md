@@ -332,7 +332,7 @@ defineProps<Props>();
 </script>
 ```
 
-また [vue-tsc](https://github.com/johnsoncodehk/volar) といった型検査ツールを使用すると `<template>` 内の属性値もチェックしてくれます。
+また [vue-tsc](https://github.com/johnsoncodehk/volar/tree/10d1a6a8b4011adee0a7c309da25caae7fb4fea9/vue-language-tools/vue-tsc) といった型検査ツールを使用すると `<template>` 内の属性値もチェックしてくれます。
 
 ```html
 <!-- aria-current は空文字が使用できないと怒ってくれる -->
