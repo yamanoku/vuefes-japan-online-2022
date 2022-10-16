@@ -8,6 +8,10 @@ I spoke at [Vue Fes Japan Online 2022](https://vuefes.jp/2022/) on October 16, 2
 
 [English Page](https://yamanoku.net/vuefes-japan-online-2022/en/)
 
+## Speakerdeck
+
+https://speakerdeck.com/yamanoku/to-make-accessible-components-in-vuejs
+
 ## License
 
 [CC BY-NC-SA 4.0](./LICENSE)
